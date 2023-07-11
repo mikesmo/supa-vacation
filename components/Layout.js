@@ -15,7 +15,7 @@ import {
   UserIcon,
 } from '@heroicons/react/outline';
 import { ChevronDownIcon } from '@heroicons/react/solid';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 const menuItems = [
   {
@@ -36,7 +36,7 @@ const menuItems = [
   {
     label: 'Logout',
     icon: LogoutIcon,
-    onClick: () => null,
+    onClick: signOut,
   },
 ];
 
