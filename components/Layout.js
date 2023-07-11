@@ -15,6 +15,7 @@ import {
   UserIcon,
 } from '@heroicons/react/outline';
 import { ChevronDownIcon } from '@heroicons/react/solid';
+import { useSession } from 'next-auth/react';
 
 const menuItems = [
   {
@@ -44,8 +45,9 @@ const Layout = ({ children = null }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const user = null;
-  const isLoadingUser = false;
+  const { data: session, status } = useSession();
+  const user = session?.user;
+  const isLoadingUser = status === 'loading';
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
