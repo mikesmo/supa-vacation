@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
+import CognitoProvider from "next-auth/providers/cognito";
 import nodemailer from 'nodemailer';
 
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
@@ -16,18 +17,12 @@ export default NextAuth({
         verifyRequest: '/',
       },
     providers: [
-      EmailProvider({
-        server: {
-          host: process.env.EMAIL_SERVER_HOST,
-          port: process.env.EMAIL_SERVER_PORT,
-          auth: {
-            user: process.env.EMAIL_SERVER_USER,
-            pass: process.env.EMAIL_SERVER_PASSWORD,
-          },
-        },
-        from: process.env.EMAIL_FROM,
-        maxAge: 10 * 60, // Magic links are valid for 10 min only
+      CognitoProvider({
+        clientId: process.env.COGNITO_CLIENT_ID,
+        clientSecret: process.env.COGNITO_CLIENT_SECRET,
+        issuer: process.env.COGNITO_DOMAIN,
       }),
     ],
+    debug: true,
     adapter: PrismaAdapter(prisma),
   });

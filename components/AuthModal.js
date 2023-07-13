@@ -92,6 +92,35 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
     }
   };
 
+  const signInWithCognito = async ({ email, password }) => {
+    let toastId;
+    try {
+      toastId = toast.loading('Loading...');
+      setDisabled(true);
+      // Perform sign in
+
+      const { error } = await signIn('credentials', {
+        redirect: false,
+        callbackUrl: window.location.href,
+        email,
+        password,
+      });
+      // Something went wrong
+      if (error) {
+        console.log({error})
+        throw new Error(error);
+      }
+      //setConfirm(true);
+      toast.dismiss(toastId);
+    } catch (err) {
+      console.log({err})
+      sleep(20)
+      toast.error('Unable to sign in', { id: toastId });
+    } finally {
+      setDisabled(false);
+    }
+  };
+
   const signInWithGoogle = () => {
     // TODO: Perform Google auth
   };
@@ -195,27 +224,13 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                   ) : null}
 
                   <div className="mt-10">
-                    {/* Sign with Google */}
-                    <button
-                      disabled={disabled}
-                      onClick={() => signInWithGoogle()}
-                      className="h-[46px] w-full mx-auto border rounded-md p-2 flex justify-center items-center space-x-2 text-gray-500 hover:text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-gray-500 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-colors"
-                    >
-                      <Image
-                        src="/google.svg"
-                        alt="Google"
-                        width={32}
-                        height={32}
-                      />
-                      <span>Sign {showSignIn ? 'in' : 'up'} with Google</span>
-                    </button>
 
                     {/* Sign with email */}
                     <Formik
-                      initialValues={{ email: '' }}
+                      initialValues={{ email: '', password: '' }}
                       validationSchema={SignInSchema}
                       validateOnBlur={false}
-                      onSubmit={signInWithEmail}
+                      onSubmit={signInWithCognito}
                     >
                       {({ isSubmitting, isValid, values, resetForm }) => (
                         <Form className="mt-4">
@@ -226,7 +241,13 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                             disabled={disabled}
                             spellCheck={false}
                           />
-
+                          <Input className="mt-4"
+                              name="password"
+                              type="password"
+                              placeholder="password"
+                              disabled={disabled}
+                            />
+                          
                           <button
                             type="submit"
                             disabled={disabled || !isValid}
