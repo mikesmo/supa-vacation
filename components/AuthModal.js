@@ -100,7 +100,7 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
       // Perform sign in
 
       const { error } = await signIn('credentials', {
-        redirect: false,
+        redirect: true,
         callbackUrl: window.location.href,
         email,
         password,
@@ -114,8 +114,6 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
       toast.dismiss(toastId);
     } catch (err) {
       console.log({err})
-      sleep(20)
-      toast.error('Unable to sign in', { id: toastId });
     } finally {
       setDisabled(false);
     }
